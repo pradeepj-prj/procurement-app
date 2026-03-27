@@ -1,0 +1,14 @@
+# Exclude everything not needed at runtime
+tests/
+docs/
+scripts/
+.git/
+.gitignore
+.claude/
+.pytest_cache/
+.vscode/
+.idea/
+.env
+.env.example
+*.md
+*.ipynb
