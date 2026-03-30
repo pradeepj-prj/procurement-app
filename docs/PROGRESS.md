@@ -18,4 +18,4 @@ This file tracks what was built in each subplan — patterns established, deviat
 **Deviations from plan**:
 - Added `pydantic-settings>=2.6.0` to dependencies (not in original subplan) — required since Pydantic v2 moved `BaseSettings` to a separate package
 - Added `csv_dir` to config settings (not in original subplan) — needed for NetworkX backend fallback, already present in `.env.example`
-**Git commit**: (see below)
+**Git commit**: fcb0b0f
