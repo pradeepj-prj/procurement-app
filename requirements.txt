@@ -1,2 +1,1 @@
-# Placeholder — update with actual extras once pyproject.toml is created
-# Example: -e .[hana,agent]
+-e .[dev]
