@@ -18,9 +18,11 @@ def get_backend() -> DataBackend:
         return NetworkXBackend()
 
     if settings.graph_backend == "hana":
-        raise NotImplementedError(
-            "HANABackend is not yet implemented (see subplan 03)."
-        )
+        from app.db.connection import ConnectionPool
+        from app.db.hana_backend import HANABackend
+
+        pool = ConnectionPool()
+        return HANABackend(pool=pool)
 
     raise ValueError(f"Unknown graph_backend: {settings.graph_backend!r}")
 

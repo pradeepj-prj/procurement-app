@@ -36,3 +36,21 @@ This file tracks what was built in each subplan — patterns established, deviat
 - Used stdlib `csv` module instead of pandas — simpler, no runtime dependency needed (pandas is dev-only)
 - `execute_sql` raises `NotImplementedError` as specified; tools should use typed methods
 **Git commit**: 823bb55
+
+### Subplan 03: HANA Backend & SQL Query Library (completed 2026-04-01)
+**Files created**: `app/db/connection.py`, `app/db/hana_backend.py`, `app/db/queries/__init__.py`, `app/db/queries/graph.py`, `app/db/queries/relational.py`, `tests/unit/db/test_queries.py`, `tests/integration/__init__.py`, `tests/integration/db/__init__.py`, `tests/integration/db/test_hana_backend.py`
+**Files modified**: `app/db/__init__.py` (replaced HANA `NotImplementedError` with real `HANABackend` + `ConnectionPool` creation)
+**Key patterns established**:
+- **ConnectionPool**: `app.db.connection.ConnectionPool` — thread-safe `queue.Queue`-based pool with context manager checkout, validation ping (`SELECT 1 FROM DUMMY`), and configurable size/timeout
+- **Query library**: `app.db.queries.graph` and `app.db.queries.relational` — functions return `(sql, params)` tuples; all use `?` placeholders (no string formatting); schema name from `settings.hana_schema`
+- **HANABackend**: `app.db.hana_backend.HANABackend` — implements `DataBackend` Protocol using pool + query library; normalises HANA uppercase column names to lowercase keys matching `NetworkXBackend` output
+- **Integration test pattern**: `tests/integration/` with `pytestmark = pytest.mark.skipif(not os.environ.get("HANA_HOST"), ...)` for graceful skip without credentials
+**Key patterns followed** (from prior subplans):
+- `DataBackend` Protocol with 6 methods (subplan 02)
+- Backend factory `get_backend()` with lazy imports (subplan 02)
+- Config singleton `from app.config import settings` (subplan 01)
+- `from __future__ import annotations` at top of every module (subplan 01)
+**Deviations from plan**:
+- Graph view queries use `settings.hana_schema` instead of hard-coded `"PROCUREMENT"` — makes schema configurable as it should be
+- `V_ALL_VERTICES` only has 3 columns (`vertex_id`, `vertex_type`, `label`), so `get_vertex()` returns these 3 fields; full relational attributes available via `execute_sql()` or the relational query library
+**Git commit**: <pending>
