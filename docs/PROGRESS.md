@@ -19,3 +19,20 @@ This file tracks what was built in each subplan — patterns established, deviat
 - Added `pydantic-settings>=2.6.0` to dependencies (not in original subplan) — required since Pydantic v2 moved `BaseSettings` to a separate package
 - Added `csv_dir` to config settings (not in original subplan) — needed for NetworkX backend fallback, already present in `.env.example`
 **Git commit**: fcb0b0f
+
+### Subplan 02: Database Abstraction Layer (completed 2026-04-01)
+**Files created**: `app/db/__init__.py`, `app/db/backend.py`, `app/db/networkx_backend.py`, `tests/__init__.py`, `tests/conftest.py`, `tests/unit/__init__.py`, `tests/unit/db/__init__.py`, `tests/unit/db/test_networkx_backend.py`
+**Files modified**: none
+**Key patterns established**:
+- **DataBackend Protocol**: `app.db.backend.DataBackend` — structural subtyping interface (PEP 544) with 6 methods: `execute_sql`, `get_vertex`, `get_neighbors`, `search_vertices`, `get_vertex_counts`, `get_edge_counts`
+- **Backend factory**: `from app.db import get_backend` — reads `settings.graph_backend` to return the appropriate implementation; lazy imports keep unused backends out of memory
+- **NetworkXBackend**: CSV → DiGraph loader with declarative vertex/edge mapping tables (`_VERTEX_DEFS`, `_EDGE_DEFS`); all 10 vertex types and 14 edge types from the HANA graph workspace are represented
+- **Test structure**: `tests/unit/db/` with session-scoped `nx_backend` fixture in `tests/conftest.py`; tests skip gracefully if CSV data is unavailable
+**Key patterns followed** (from prior subplans):
+- Config singleton `from app.config import settings` with `settings.graph_backend` and `settings.csv_dir` (subplan 01)
+- `from __future__ import annotations` at top of every module (subplan 01)
+- Package structure mirrors `app/api/` convention (subplan 01)
+**Deviations from plan**:
+- Used stdlib `csv` module instead of pandas — simpler, no runtime dependency needed (pandas is dev-only)
+- `execute_sql` raises `NotImplementedError` as specified; tools should use typed methods
+**Git commit**: <pending>
