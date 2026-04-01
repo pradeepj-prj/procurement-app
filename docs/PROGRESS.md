@@ -35,4 +35,4 @@ This file tracks what was built in each subplan — patterns established, deviat
 **Deviations from plan**:
 - Used stdlib `csv` module instead of pandas — simpler, no runtime dependency needed (pandas is dev-only)
 - `execute_sql` raises `NotImplementedError` as specified; tools should use typed methods
-**Git commit**: <pending>
+**Git commit**: 823bb55
