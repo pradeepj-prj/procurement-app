@@ -54,3 +54,24 @@ This file tracks what was built in each subplan — patterns established, deviat
 - Graph view queries use `settings.hana_schema` instead of hard-coded `"PROCUREMENT"` — makes schema configurable as it should be
 - `V_ALL_VERTICES` only has 3 columns (`vertex_id`, `vertex_type`, `label`), so `get_vertex()` returns these 3 fields; full relational attributes available via `execute_sql()` or the relational query library
 **Git commit**: a2f1547
+
+### Subplan 04: Health Endpoints & FastAPI Router Setup (completed 2026-04-01)
+**Files created**: `app/api/dependencies.py`, `app/api/endpoints/health.py`, `app/api/middleware/cors.py`, `tests/unit/api/__init__.py`, `tests/unit/api/test_health.py`
+**Files modified**: `app/api/router.py` (replaced placeholder with lifespan, health router, CORS setup)
+**Key patterns established**:
+- **Lifespan context manager**: `app/api/router.py` uses `@asynccontextmanager` lifespan (modern FastAPI pattern, not deprecated `on_event`); initialises `app.state.backend` on startup via `get_backend()`
+- **Dependency injection**: `app/api/dependencies.py` provides `get_backend(request)` — endpoints declare `backend: DataBackend = Depends(get_backend)` to receive the shared backend
+- **Health/ready separation**: `/health` is a fast liveness check (no dependencies); `/ready` tests database connectivity and returns 503 if downstream is unreachable
+- **CORS middleware**: `app/api/middleware/cors.py` with `setup_cors(app)` — allows React dev servers at localhost:3000 and localhost:5173
+- **TestClient with lifespan**: Tests use `with TestClient(app) as c:` in a module-scoped fixture to trigger the lifespan and populate `app.state`
+**Key patterns followed** (from prior subplans):
+- Backend factory `from app.db import get_backend` (subplan 02)
+- `DataBackend` Protocol (subplan 02)
+- Config singleton `from app.config import settings` (subplan 01)
+- `from __future__ import annotations` at top of every module (subplan 01)
+- Package structure `app/api/endpoints/`, `app/api/middleware/` (subplan 01)
+**Deviations from plan**:
+- Used `lifespan` async context manager instead of deprecated `on_event("startup")` — modern FastAPI pattern, required by `fastapi>=0.115.0`
+- `/ready` falls back to `get_vertex_counts()` when `execute_sql` raises `NotImplementedError` (NetworkX backend) — ensures readiness check works in local dev
+- Version in `/health` response read from `request.app.version` rather than hard-coded
+**Git commit**: <pending>
