@@ -74,4 +74,4 @@ This file tracks what was built in each subplan — patterns established, deviat
 - Used `lifespan` async context manager instead of deprecated `on_event("startup")` — modern FastAPI pattern, required by `fastapi>=0.115.0`
 - `/ready` falls back to `get_vertex_counts()` when `execute_sql` raises `NotImplementedError` (NetworkX backend) — ensures readiness check works in local dev
 - Version in `/health` response read from `request.app.version` rather than hard-coded
-**Git commit**: <pending>
+**Git commit**: b724e02
