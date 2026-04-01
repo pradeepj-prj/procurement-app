@@ -53,4 +53,4 @@ This file tracks what was built in each subplan — patterns established, deviat
 **Deviations from plan**:
 - Graph view queries use `settings.hana_schema` instead of hard-coded `"PROCUREMENT"` — makes schema configurable as it should be
 - `V_ALL_VERTICES` only has 3 columns (`vertex_id`, `vertex_type`, `label`), so `get_vertex()` returns these 3 fields; full relational attributes available via `execute_sql()` or the relational query library
-**Git commit**: <pending>
+**Git commit**: a2f1547
